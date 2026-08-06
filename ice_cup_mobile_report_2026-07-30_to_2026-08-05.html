@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>얼음컵 증정 현황 모바일 보고서</title>
+<style>
+:root {
+  --bg:#f4f6fa; --card:#fff; --text:#182033; --muted:#70798a; --line:#e3e7ef;
+  --accent:#2f6edb; --soft:#edf3ff;
+}
+* { box-sizing:border-box; }
+html, body { margin:0; padding:0; background:var(--bg); color:var(--text); }
+body {
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.page {
+  width:100%;
+  max-width:760px;
+  margin:0 auto;
+  padding:18px 14px calc(24px + env(safe-area-inset-bottom));
+}
+.header {
+  padding:4px 2px 14px;
+}
+.header h1 {
+  margin:0;
+  font-size:24px;
+  line-height:1.25;
+  letter-spacing:-0.4px;
+}
+.header p {
+  margin:6px 0 0;
+  color:var(--muted);
+  font-size:13px;
+}
+.kpis {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin-bottom:14px;
+}
+.kpi {
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:14px;
+}
+.kpi .label {
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:6px;
+}
+.kpi .value {
+  font-size:23px;
+  line-height:1.15;
+  font-weight:800;
+  letter-spacing:-0.3px;
+}
+.card {
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:14px;
+}
+.card h2 {
+  margin:0;
+  font-size:18px;
+  letter-spacing:-0.2px;
+}
+.card .desc {
+  margin:5px 0 14px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.45;
+}
+.rank-list {
+  display:grid;
+  gap:11px;
+}
+.rank-row {
+  display:grid;
+  grid-template-columns:34px 46px 1fr auto;
+  gap:9px;
+  align-items:center;
+}
+.rank-num {
+  font-size:13px;
+  font-weight:800;
+  text-align:center;
+}
+.badge {
+  border-radius:999px;
+  color:white;
+  font-weight:800;
+  text-align:center;
+  padding:5px 0;
+  font-size:12px;
+}
+.bar-track {
+  height:10px;
+  background:#edf0f5;
+  border-radius:999px;
+  overflow:hidden;
+}
+.bar-fill {
+  height:100%;
+  border-radius:999px;
+}
+.rank-value {
+  text-align:right;
+  min-width:72px;
+}
+.rank-value strong {
+  display:block;
+  font-size:15px;
+}
+.rank-value span {
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  margin-top:1px;
+}
+.legend {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 12px;
+  margin-bottom:10px;
+}
+.legend-item {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:12px;
+  font-weight:700;
+}
+.legend-dot {
+  width:9px; height:9px; border-radius:50%;
+}
+.chart-box {
+  width:100%;
+  overflow:hidden;
+}
+#trendChart {
+  width:100%;
+  height:auto;
+  display:block;
+}
+.mobile-table {
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  border:1px solid var(--line);
+  border-radius:14px;
+  overflow:hidden;
+}
+.mobile-table th, .mobile-table td {
+  padding:10px 8px;
+  border-bottom:1px solid var(--line);
+  font-size:12px;
+}
+.mobile-table th {
+  background:#f1f4f8;
+  text-align:center;
+}
+.mobile-table td {
+  text-align:right;
+}
+.mobile-table td:first-child,
+.mobile-table td:nth-child(2) {
+  text-align:center;
+}
+.mobile-table tr:last-child td { border-bottom:none; }
+.total-row td {
+  background:var(--soft);
+  font-weight:800;
+}
+.daily-scroll {
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  border-radius:14px;
+}
+.daily-table {
+  min-width:700px;
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  border:1px solid var(--line);
+  border-radius:14px;
+  overflow:hidden;
+}
+.daily-table th, .daily-table td {
+  padding:10px 9px;
+  border-bottom:1px solid var(--line);
+  border-right:1px solid var(--line);
+  font-size:12px;
+  text-align:right;
+  white-space:nowrap;
+}
+.daily-table th {
+  background:#f1f4f8;
+  text-align:center;
+}
+.daily-table th:last-child, .daily-table td:last-child { border-right:none; }
+.daily-table tr:last-child td { border-bottom:none; }
+.daily-table td:first-child { text-align:center; font-weight:800; }
+.note {
+  margin-top:10px;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.45;
+}
+@media (min-width:640px) {
+  .page { padding:26px 22px; }
+  .header h1 { font-size:28px; }
+  .kpis { grid-template-columns:repeat(4,1fr); }
+}
+@media print {
+  body { background:white; }
+  .page { max-width:none; padding:8px; }
+  .card,.kpi { break-inside:avoid; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="header">
+    <h1>카카오톡 신규고객 얼음컵 증정 현황</h1>
+    <p>집계 기간: 2026년 7월 30일 ~ 8월 5일</p>
+  </header>
+
+  <section class="kpis">
+    <div class="kpi">
+      <div class="label">전체 증정 수량</div>
+      <div class="value">560개</div>
+    </div>
+    <div class="kpi">
+      <div class="label">누적 1위</div>
+      <div class="value">SRY 174개</div>
+    </div>
+    <div class="kpi">
+      <div class="label">최고 실적일</div>
+      <div class="value">8/5</div>
+    </div>
+    <div class="kpi">
+      <div class="label">최고 일일 수량</div>
+      <div class="value">204개</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>누적 순위 및 점유율</h2>
+    <p class="desc">전체 560개 기준, 누적 실적이 높은 순서입니다.</p>
+    <div class="rank-list">
+          <div class="rank-row">
+            <div class="rank-num">1</div>
+            <div class="badge" style="background:#4f63d2">SRY</div>
+            <div class="bar-track"><div class="bar-fill" style="width:31.1%;background:#4f63d2"></div></div>
+            <div class="rank-value"><strong>174개</strong><span>31.1%</span></div>
+          </div>
+          <div class="rank-row">
+            <div class="rank-num">2</div>
+            <div class="badge" style="background:#58a942">ROB</div>
+            <div class="bar-track"><div class="bar-fill" style="width:20.4%;background:#58a942"></div></div>
+            <div class="rank-value"><strong>114개</strong><span>20.4%</span></div>
+          </div>
+          <div class="rank-row">
+            <div class="rank-num">3</div>
+            <div class="badge" style="background:#8b55b6">LGY</div>
+            <div class="bar-track"><div class="bar-fill" style="width:18.0%;background:#8b55b6"></div></div>
+            <div class="rank-value"><strong>101개</strong><span>18.0%</span></div>
+          </div>
+          <div class="rank-row">
+            <div class="rank-num">4</div>
+            <div class="badge" style="background:#e24a4a">BBY</div>
+            <div class="bar-track"><div class="bar-fill" style="width:13.2%;background:#e24a4a"></div></div>
+            <div class="rank-value"><strong>74개</strong><span>13.2%</span></div>
+          </div>
+          <div class="rank-row">
+            <div class="rank-num">5</div>
+            <div class="badge" style="background:#d28a28">YAL</div>
+            <div class="bar-track"><div class="bar-fill" style="width:10.7%;background:#d28a28"></div></div>
+            <div class="rank-value"><strong>60개</strong><span>10.7%</span></div>
+          </div>
+          <div class="rank-row">
+            <div class="rank-num">6</div>
+            <div class="badge" style="background:#3f9fb6">MET</div>
+            <div class="bar-track"><div class="bar-fill" style="width:6.6%;background:#3f9fb6"></div></div>
+            <div class="rank-value"><strong>37개</strong><span>6.6%</span></div>
+          </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>지점별 일일 추이</h2>
+    <p class="desc">각 날짜별 수량을 모든 지점 라인 위에 직접 표시했습니다.</p>
+    <div class="legend" id="legend"></div>
+    <div class="chart-box">
+      <svg id="trendChart" viewBox="0 0 760 450" role="img" aria-label="지점별 일일 얼음컵 증정 추이"></svg>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>전체 수량 테이블</h2>
+    <p class="desc">누적 수량과 전체 점유율을 함께 표시했습니다.</p>
+    <table class="mobile-table">
+      <thead>
+        <tr><th>순위</th><th>지점</th><th>누적</th><th>점유율</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td><span class="badge" style="display:inline-block;min-width:44px;background:#4f63d2">SRY</span></td><td><strong>174</strong></td><td><strong>31.1%</strong></td></tr><tr><td>2</td><td><span class="badge" style="display:inline-block;min-width:44px;background:#58a942">ROB</span></td><td><strong>114</strong></td><td><strong>20.4%</strong></td></tr><tr><td>3</td><td><span class="badge" style="display:inline-block;min-width:44px;background:#8b55b6">LGY</span></td><td><strong>101</strong></td><td><strong>18.0%</strong></td></tr><tr><td>4</td><td><span class="badge" style="display:inline-block;min-width:44px;background:#e24a4a">BBY</span></td><td><strong>74</strong></td><td><strong>13.2%</strong></td></tr><tr><td>5</td><td><span class="badge" style="display:inline-block;min-width:44px;background:#d28a28">YAL</span></td><td><strong>60</strong></td><td><strong>10.7%</strong></td></tr><tr><td>6</td><td><span class="badge" style="display:inline-block;min-width:44px;background:#3f9fb6">MET</span></td><td><strong>37</strong></td><td><strong>6.6%</strong></td></tr><tr class="total-row"><td colspan="2">합계</td><td>560</td><td>100.0%</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>날짜별 상세 수량</h2>
+    <p class="desc">휴대폰에서 좌우로 밀어 전체 날짜를 확인할 수 있습니다.</p>
+    <div class="daily-scroll">
+      <table class="daily-table">
+        <thead>
+          <tr>
+            <th>지점</th>
+            <th>7/30</th><th>7/31</th><th>8/1</th><th>8/2</th><th>8/3</th><th>8/4</th><th>8/5</th>
+            <th>누적</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>SRY</td><td>2</td><td>1</td><td>0</td><td>71</td><td>16</td><td>0</td><td>84</td><td><strong>174</strong></td></tr><tr><td>ROB</td><td>4</td><td>25</td><td>7</td><td>33</td><td>5</td><td>9</td><td>31</td><td><strong>114</strong></td></tr><tr><td>LGY</td><td>14</td><td>2</td><td>4</td><td>0</td><td>8</td><td>0</td><td>73</td><td><strong>101</strong></td></tr><tr><td>BBY</td><td>20</td><td>18</td><td>15</td><td>12</td><td>8</td><td>0</td><td>1</td><td><strong>74</strong></td></tr><tr><td>YAL</td><td>2</td><td>7</td><td>1</td><td>2</td><td>7</td><td>34</td><td>7</td><td><strong>60</strong></td></tr><tr><td>MET</td><td>4</td><td>11</td><td>3</td><td>7</td><td>4</td><td>0</td><td>8</td><td><strong>37</strong></td></tr><tr class="total-row"><td>합계</td><td>46</td><td>64</td><td>30</td><td>125</td><td>48</td><td>43</td><td>204</td><td>560</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note">※ 8월 5일 실적: BBY 1, SRY 84, ROB 31, LGY 73, YAL 7, MET 8.</div>
+  </section>
+</div>
+
+<script>
+const D = {"dates": ["7/30", "7/31", "8/1", "8/2", "8/3", "8/4", "8/5"], "branches": {"BBY": [20, 18, 15, 12, 8, 0, 1], "SRY": [2, 1, 0, 71, 16, 0, 84], "ROB": [4, 25, 7, 33, 5, 9, 31], "LGY": [14, 2, 4, 0, 8, 0, 73], "YAL": [2, 7, 1, 2, 7, 34, 7], "MET": [4, 11, 3, 7, 4, 0, 8]}, "totals": {"BBY": 74, "SRY": 174, "ROB": 114, "LGY": 101, "YAL": 60, "MET": 37}, "shares": {"BBY": 13.214285714285715, "SRY": 31.071428571428573, "ROB": 20.357142857142858, "LGY": 18.035714285714285, "YAL": 10.714285714285714, "MET": 6.607142857142858}, "ranking": ["SRY", "ROB", "LGY", "BBY", "YAL", "MET"], "dailyTotals": [46, 64, 30, 125, 48, 43, 204], "grandTotal": 560, "colors": {"BBY": "#e24a4a", "SRY": "#4f63d2", "ROB": "#58a942", "LGY": "#8b55b6", "YAL": "#d28a28", "MET": "#3f9fb6"}};
+const svg = document.getElementById('trendChart');
+const ns = "http://www.w3.org/2000/svg";
+const W=760,H=450,margin={top:30,right:18,bottom:50,left:44};
+const innerW=W-margin.left-margin.right, innerH=H-margin.top-margin.bottom;
+const maxY=90;
+
+function node(name, attrs={}, text="") {
+  const n=document.createElementNS(ns,name);
+  Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,v));
+  if(text!=="") n.textContent=text;
+  return n;
+}
+function x(i) { return margin.left + i*(innerW/(D.dates.length-1)); }
+function y(v) { return margin.top + innerH - (v/maxY)*innerH; }
+
+svg.appendChild(node("rect",{x:0,y:0,width:W,height:H,fill:"#fff"}));
+
+for(let t=0;t<=maxY;t+=10) {
+  const yy=y(t);
+  svg.appendChild(node("line",{x1:margin.left,y1:yy,x2:W-margin.right,y2:yy,stroke:"#e5e9f0","stroke-width":"1"}));
+  svg.appendChild(node("text",{x:margin.left-8,y:yy+4,"text-anchor":"end",fill:"#7a8393","font-size":"10"},String(t)));
+}
+
+D.dates.forEach((d,i)=>{
+  const xx=x(i);
+  svg.appendChild(node("line",{x1:xx,y1:margin.top,x2:xx,y2:H-margin.bottom,stroke:"#f1f3f7","stroke-width":"1"}));
+  svg.appendChild(node("text",{x:xx,y:H-margin.bottom+24,"text-anchor":"middle",fill:"#4e5868","font-size":"11","font-weight":"700"},d));
+});
+
+const offsets={
+  BBY:[-10,-10,-10,-10,-10,14,-10],
+  SRY:[14,14,14,-12,-12,14,-12],
+  ROB:[-12,-12,-12,-12,14,-12,-12],
+  LGY:[14,14,-12,14,14,14,14],
+  YAL:[-12,-12,14,-12,-12,-12,-12],
+  MET:[14,14,14,14,14,14,14]
+};
+
+Object.keys(D.branches).forEach(branch=>{
+  const vals=D.branches[branch];
+  svg.appendChild(node("polyline",{
+    points:vals.map((v,i)=>`${x(i)},${y(v)}`).join(" "),
+    fill:"none",stroke:D.colors[branch],"stroke-width":"2.6","stroke-linejoin":"round","stroke-linecap":"round"
+  }));
+  vals.forEach((v,i)=>{
+    const cx=x(i),cy=y(v);
+    svg.appendChild(node("circle",{cx,cy,r:"3.8",fill:"#fff",stroke:D.colors[branch],"stroke-width":"2.4"}));
+    svg.appendChild(node("text",{
+      x:cx,y:cy+(offsets[branch][i]||-10),"text-anchor":"middle",
+      fill:D.colors[branch],"font-size":"9.5","font-weight":"800",
+      stroke:"#fff","stroke-width":"3","paint-order":"stroke"
+    },String(v)));
+  });
+});
+
+const legend=document.getElementById("legend");
+Object.keys(D.branches).forEach(branch=>{
+  const item=document.createElement("div");
+  item.className="legend-item";
+  item.innerHTML=`<span class="legend-dot" style="background:${D.colors[branch]}"></span>${branch}`;
+  legend.appendChild(item);
+});
+</script>
+</body>
+</html>
