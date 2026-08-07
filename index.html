@@ -1,405 +1,197 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>얼음컵 증정 현황 모바일 보고서</title>
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>카카오톡 친구추가 및 인스타 팔로워 얼음컵 증정 현황</title>
 <style>
-:root {
-  --bg:#f4f6fa; --card:#fff; --text:#182033; --muted:#70798a; --line:#e3e7ef;
-  --accent:#2f6edb; --soft:#edf3ff;
-}
-* { box-sizing:border-box; }
-html, body { margin:0; padding:0; background:var(--bg); color:var(--text); }
-body {
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Arial,sans-serif;
-  -webkit-font-smoothing:antialiased;
-}
-.page {
-  width:100%;
-  max-width:760px;
-  margin:0 auto;
-  padding:18px 14px calc(24px + env(safe-area-inset-bottom));
-}
-.header {
-  padding:4px 2px 14px;
-}
-.header h1 {
-  margin:0;
-  font-size:24px;
-  line-height:1.25;
-  letter-spacing:-0.4px;
-}
-.header p {
-  margin:6px 0 0;
-  color:var(--muted);
-  font-size:13px;
-}
-.kpis {
+:root{--bg:#f4f6fa;--card:#fff;--text:#182033;--muted:#70798a;--line:#e3e7ef;--soft:#edf3ff}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Arial,sans-serif}
+.page{max-width:760px;margin:auto;padding:18px 14px 28px} h1{font-size:22px;line-height:1.3;margin:0 0 6px} .sub{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:14px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px} .kpi,.card{background:var(--card);border:1px solid var(--line);border-radius:16px}
+.kpi{padding:14px} .kpi small{display:block;color:var(--muted);font-size:11px;margin-bottom:5px} .kpi b{font-size:22px}
+.card{padding:15px;margin-bottom:14px} h2{font-size:17px;margin:0 0 5px} .desc{font-size:12px;color:var(--muted);margin:0 0 12px}
+.piegrid{display:grid;grid-template-columns:130px 1fr;gap:14px;align-items:center} .pie{width:130px;height:130px;border-radius:50%;background:conic-gradient(#4f63d2 0.000% 31.652%, #8b55b6 31.652% 55.612%, #58a942 55.612% 74.779%, #e24a4a 74.779% 85.246%, #d28a28 85.246% 94.451%, #3f9fb6 94.451% 100.000%);position:relative}
+.pie:after{content:"793\A TOTAL";white-space:pre;position:absolute;inset:26px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800;line-height:1.2}
+.pileg{display:grid;gap:7px} .pi{display:grid;grid-template-columns:10px 34px 1fr auto;gap:7px;align-items:center;font-size:12px} .pi span{width:9px;height:9px;border-radius:2px} .pi em{font-style:normal} .pi small{color:var(--muted)}
+.ranklist{display:grid;gap:10px} .rank{display:grid;grid-template-columns:24px 44px 1fr 66px;gap:8px;align-items:center;font-size:12px} .pill{color:white;border-radius:999px;padding:4px 8px;display:inline-block;text-align:center;font-weight:800}
+.track{height:10px;background:#edf0f5;border-radius:999px;overflow:hidden} .fill{height:100%;border-radius:999px} .rv{text-align:right} .rv strong{display:block;font-size:14px} .rv small{display:block;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 11px;margin-bottom:8px;font-size:11px;font-weight:700} .legend i{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
+#chart{width:100%;height:auto;display:block} table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+th,td{padding:9px 7px;font-size:11px;border-bottom:1px solid var(--line);text-align:right} th{background:#f1f4f8;text-align:center} td:first-child,td:nth-child(2){text-align:center} tr:last-child td{border-bottom:0} .total td{background:var(--soft);font-weight:800}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch} .wide{min-width:820px} .note{font-size:10.5px;color:var(--muted);line-height:1.45;margin-top:9px}
+@media(min-width:640px){.kpis{grid-template-columns:repeat(4,1fr)} h1{font-size:27px}}
+</style>
+<style>
+.pending-grid{
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:10px;
-  margin-bottom:14px;
+  grid-template-columns:1fr;
+  gap:12px;
 }
-.kpi {
-  background:var(--card);
+.pending-card{
   border:1px solid var(--line);
-  border-radius:16px;
-  padding:14px;
+  border-radius:14px;
+  padding:13px;
+  background:#fafbfc;
 }
-.kpi .label {
-  color:var(--muted);
-  font-size:12px;
-  margin-bottom:6px;
-}
-.kpi .value {
-  font-size:23px;
-  line-height:1.15;
-  font-weight:800;
-  letter-spacing:-0.3px;
-}
-.card {
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:16px;
-  margin-bottom:14px;
-}
-.card h2 {
-  margin:0;
-  font-size:18px;
-  letter-spacing:-0.2px;
-}
-.card .desc {
-  margin:5px 0 14px;
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.45;
-}
-.rank-list {
-  display:grid;
-  gap:11px;
-}
-.rank-row {
-  display:grid;
-  grid-template-columns:34px 46px 1fr auto;
-  gap:9px;
-  align-items:center;
-}
-.rank-num {
-  font-size:13px;
-  font-weight:800;
-  text-align:center;
-}
-.badge {
-  border-radius:999px;
-  color:white;
-  font-weight:800;
-  text-align:center;
-  padding:5px 0;
-  font-size:12px;
-}
-.bar-track {
-  height:10px;
-  background:#edf0f5;
-  border-radius:999px;
-  overflow:hidden;
-}
-.bar-fill {
-  height:100%;
-  border-radius:999px;
-}
-.rank-value {
-  text-align:right;
-  min-width:72px;
-}
-.rank-value strong {
-  display:block;
-  font-size:15px;
-}
-.rank-value span {
-  display:block;
-  color:var(--muted);
-  font-size:11px;
-  margin-top:1px;
-}
-.legend {
+.pending-head{
   display:flex;
-  flex-wrap:wrap;
-  gap:8px 12px;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
   margin-bottom:10px;
 }
-.legend-item {
-  display:flex;
-  align-items:center;
-  gap:6px;
-  font-size:12px;
-  font-weight:700;
+.pending-head strong{
+  font-size:14px;
 }
-.legend-dot {
-  width:9px; height:9px; border-radius:50%;
-}
-.chart-box {
-  width:100%;
-  overflow:hidden;
-}
-#trendChart {
-  width:100%;
-  height:auto;
-  display:block;
-}
-.mobile-table {
-  width:100%;
-  border-collapse:separate;
-  border-spacing:0;
-  border:1px solid var(--line);
-  border-radius:14px;
-  overflow:hidden;
-}
-.mobile-table th, .mobile-table td {
-  padding:10px 8px;
-  border-bottom:1px solid var(--line);
-  font-size:12px;
-}
-.mobile-table th {
-  background:#f1f4f8;
-  text-align:center;
-}
-.mobile-table td {
-  text-align:right;
-}
-.mobile-table td:first-child,
-.mobile-table td:nth-child(2) {
-  text-align:center;
-}
-.mobile-table tr:last-child td { border-bottom:none; }
-.total-row td {
-  background:var(--soft);
+.pending-status{
+  display:inline-block;
+  background:#eef1f5;
+  color:#697386;
+  border-radius:999px;
+  padding:4px 8px;
+  font-size:10px;
   font-weight:800;
-}
-.daily-scroll {
-  overflow-x:auto;
-  -webkit-overflow-scrolling:touch;
-  border-radius:14px;
-}
-.daily-table {
-  min-width:700px;
-  width:100%;
-  border-collapse:separate;
-  border-spacing:0;
-  border:1px solid var(--line);
-  border-radius:14px;
-  overflow:hidden;
-}
-.daily-table th, .daily-table td {
-  padding:10px 9px;
-  border-bottom:1px solid var(--line);
-  border-right:1px solid var(--line);
-  font-size:12px;
-  text-align:right;
   white-space:nowrap;
 }
-.daily-table th {
-  background:#f1f4f8;
+.placeholder-chart{
+  height:150px;
+  border:1px dashed #cfd5df;
+  border-radius:12px;
+  background:
+    linear-gradient(to bottom, transparent 24%, #eef1f5 25%, transparent 26%),
+    linear-gradient(to bottom, transparent 49%, #eef1f5 50%, transparent 51%),
+    linear-gradient(to bottom, transparent 74%, #eef1f5 75%, transparent 76%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#8a93a3;
+  font-size:12px;
+  font-weight:700;
   text-align:center;
+  padding:12px;
 }
-.daily-table th:last-child, .daily-table td:last-child { border-right:none; }
-.daily-table tr:last-child td { border-bottom:none; }
-.daily-table td:first-child { text-align:center; font-weight:800; }
-.note {
+.pending-table{
+  width:100%;
   margin-top:10px;
-  color:var(--muted);
-  font-size:11px;
-  line-height:1.45;
+  border-collapse:separate;
+  border-spacing:0;
+  border:1px solid var(--line);
+  border-radius:10px;
+  overflow:hidden;
 }
-@media (min-width:640px) {
-  .page { padding:26px 22px; }
-  .header h1 { font-size:28px; }
-  .kpis { grid-template-columns:repeat(4,1fr); }
+.pending-table th,
+.pending-table td{
+  padding:8px 6px;
+  font-size:10.5px;
+  border-bottom:1px solid var(--line);
+  text-align:center !important;
 }
-@media print {
-  body { background:white; }
-  .page { max-width:none; padding:8px; }
-  .card,.kpi { break-inside:avoid; }
+.pending-table th{
+  background:#f1f4f8;
+}
+.pending-table tr:last-child td{
+  border-bottom:0;
+}
+@media(min-width:640px){
+  .pending-grid{
+    grid-template-columns:repeat(3,1fr);
+  }
 }
 </style>
-</head>
-<body>
-<div class="page">
-  <header class="header">
-    <h1>카카오톡 신규고객 얼음컵 증정 현황</h1>
-    <p>집계 기간: 2026년 7월 30일 ~ 8월 5일</p>
-  </header>
 
-  <section class="kpis">
-    <div class="kpi">
-      <div class="label">전체 증정 수량</div>
-      <div class="value">560개</div>
-    </div>
-    <div class="kpi">
-      <div class="label">누적 1위</div>
-      <div class="value">SRY 174개</div>
-    </div>
-    <div class="kpi">
-      <div class="label">최고 실적일</div>
-      <div class="value">8/5</div>
-    </div>
-    <div class="kpi">
-      <div class="label">최고 일일 수량</div>
-      <div class="value">204개</div>
-    </div>
-  </section>
+</head><body><div class="page">
+<h1>카카오톡 친구추가 및 인스타 팔로워 얼음컵 증정 현황</h1>
+<div class="sub">집계기간: 2026년 7월 30일 ~ 8월 6일<br>카카오톡 친구추가를 기본으로 운영하며, 외국인 고객 비중이 높은 지점은 Instagram 팔로우 참여를 함께 반영.</div>
 
-  <section class="card">
-    <h2>누적 순위 및 점유율</h2>
-    <p class="desc">전체 560개 기준, 누적 실적이 높은 순서입니다.</p>
-    <div class="rank-list">
-          <div class="rank-row">
-            <div class="rank-num">1</div>
-            <div class="badge" style="background:#4f63d2">SRY</div>
-            <div class="bar-track"><div class="bar-fill" style="width:31.1%;background:#4f63d2"></div></div>
-            <div class="rank-value"><strong>174개</strong><span>31.1%</span></div>
-          </div>
-          <div class="rank-row">
-            <div class="rank-num">2</div>
-            <div class="badge" style="background:#58a942">ROB</div>
-            <div class="bar-track"><div class="bar-fill" style="width:20.4%;background:#58a942"></div></div>
-            <div class="rank-value"><strong>114개</strong><span>20.4%</span></div>
-          </div>
-          <div class="rank-row">
-            <div class="rank-num">3</div>
-            <div class="badge" style="background:#8b55b6">LGY</div>
-            <div class="bar-track"><div class="bar-fill" style="width:18.0%;background:#8b55b6"></div></div>
-            <div class="rank-value"><strong>101개</strong><span>18.0%</span></div>
-          </div>
-          <div class="rank-row">
-            <div class="rank-num">4</div>
-            <div class="badge" style="background:#e24a4a">BBY</div>
-            <div class="bar-track"><div class="bar-fill" style="width:13.2%;background:#e24a4a"></div></div>
-            <div class="rank-value"><strong>74개</strong><span>13.2%</span></div>
-          </div>
-          <div class="rank-row">
-            <div class="rank-num">5</div>
-            <div class="badge" style="background:#d28a28">YAL</div>
-            <div class="bar-track"><div class="bar-fill" style="width:10.7%;background:#d28a28"></div></div>
-            <div class="rank-value"><strong>60개</strong><span>10.7%</span></div>
-          </div>
-          <div class="rank-row">
-            <div class="rank-num">6</div>
-            <div class="badge" style="background:#3f9fb6">MET</div>
-            <div class="bar-track"><div class="bar-fill" style="width:6.6%;background:#3f9fb6"></div></div>
-            <div class="rank-value"><strong>37개</strong><span>6.6%</span></div>
-          </div>
-    </div>
-  </section>
+<div class="kpis">
+<div class="kpi"><small>전체 증정 수량</small><b>793개</b></div>
+<div class="kpi"><small>누적 1위</small><b>SRY 251개</b></div>
+<div class="kpi"><small>최고 실적일</small><b>8/6</b></div>
+<div class="kpi"><small>최고 일일 수량</small><b>233개</b></div>
+</div>
 
-  <section class="card">
-    <h2>지점별 일일 추이</h2>
-    <p class="desc">각 날짜별 수량을 모든 지점 라인 위에 직접 표시했습니다.</p>
-    <div class="legend" id="legend"></div>
-    <div class="chart-box">
-      <svg id="trendChart" viewBox="0 0 760 450" role="img" aria-label="지점별 일일 얼음컵 증정 추이"></svg>
-    </div>
-  </section>
+<div class="card"><h2>지점별 누적 점유율</h2><p class="desc">전체 793개 기준 지점별 비중</p>
+<div class="piegrid"><div class="pie"></div><div class="pileg"><div class="pi"><span style="background:#4f63d2"></span><b>SRY</b><em>251개</em><small>31.7%</small></div><div class="pi"><span style="background:#8b55b6"></span><b>LGY</b><em>190개</em><small>24.0%</small></div><div class="pi"><span style="background:#58a942"></span><b>ROB</b><em>152개</em><small>19.2%</small></div><div class="pi"><span style="background:#e24a4a"></span><b>BBY</b><em>83개</em><small>10.5%</small></div><div class="pi"><span style="background:#d28a28"></span><b>YAL</b><em>73개</em><small>9.2%</small></div><div class="pi"><span style="background:#3f9fb6"></span><b>MET</b><em>44개</em><small>5.5%</small></div></div></div></div>
 
-  <section class="card">
-    <h2>전체 수량 테이블</h2>
-    <p class="desc">누적 수량과 전체 점유율을 함께 표시했습니다.</p>
-    <table class="mobile-table">
-      <thead>
-        <tr><th>순위</th><th>지점</th><th>누적</th><th>점유율</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>1</td><td><span class="badge" style="display:inline-block;min-width:44px;background:#4f63d2">SRY</span></td><td><strong>174</strong></td><td><strong>31.1%</strong></td></tr><tr><td>2</td><td><span class="badge" style="display:inline-block;min-width:44px;background:#58a942">ROB</span></td><td><strong>114</strong></td><td><strong>20.4%</strong></td></tr><tr><td>3</td><td><span class="badge" style="display:inline-block;min-width:44px;background:#8b55b6">LGY</span></td><td><strong>101</strong></td><td><strong>18.0%</strong></td></tr><tr><td>4</td><td><span class="badge" style="display:inline-block;min-width:44px;background:#e24a4a">BBY</span></td><td><strong>74</strong></td><td><strong>13.2%</strong></td></tr><tr><td>5</td><td><span class="badge" style="display:inline-block;min-width:44px;background:#d28a28">YAL</span></td><td><strong>60</strong></td><td><strong>10.7%</strong></td></tr><tr><td>6</td><td><span class="badge" style="display:inline-block;min-width:44px;background:#3f9fb6">MET</span></td><td><strong>37</strong></td><td><strong>6.6%</strong></td></tr><tr class="total-row"><td colspan="2">합계</td><td>560</td><td>100.0%</td></tr>
-      </tbody>
-    </table>
-  </section>
+<div class="card"><h2>누적 순위 및 점유율</h2><p class="desc">누적 수량 기준</p><div class="ranklist"><div class="rank"><b>1</b><span class="pill" style="background:#4f63d2">SRY</span><div class="track"><div class="fill" style="width:31.7%;background:#4f63d2"></div></div><div class="rv"><strong>251개</strong><small>31.7%</small></div></div><div class="rank"><b>2</b><span class="pill" style="background:#8b55b6">LGY</span><div class="track"><div class="fill" style="width:24.0%;background:#8b55b6"></div></div><div class="rv"><strong>190개</strong><small>24.0%</small></div></div><div class="rank"><b>3</b><span class="pill" style="background:#58a942">ROB</span><div class="track"><div class="fill" style="width:19.2%;background:#58a942"></div></div><div class="rv"><strong>152개</strong><small>19.2%</small></div></div><div class="rank"><b>4</b><span class="pill" style="background:#e24a4a">BBY</span><div class="track"><div class="fill" style="width:10.5%;background:#e24a4a"></div></div><div class="rv"><strong>83개</strong><small>10.5%</small></div></div><div class="rank"><b>5</b><span class="pill" style="background:#d28a28">YAL</span><div class="track"><div class="fill" style="width:9.2%;background:#d28a28"></div></div><div class="rv"><strong>73개</strong><small>9.2%</small></div></div><div class="rank"><b>6</b><span class="pill" style="background:#3f9fb6">MET</span><div class="track"><div class="fill" style="width:5.5%;background:#3f9fb6"></div></div><div class="rv"><strong>44개</strong><small>5.5%</small></div></div></div></div>
 
-  <section class="card">
-    <h2>날짜별 상세 수량</h2>
-    <p class="desc">휴대폰에서 좌우로 밀어 전체 날짜를 확인할 수 있습니다.</p>
-    <div class="daily-scroll">
-      <table class="daily-table">
+<div class="card"><h2>지점별 일일 추이</h2><p class="desc">각 날짜별 수량을 라인 위에 직접 표시</p>
+<div class="legend" id="legend"></div><svg id="chart" viewBox="0 0 820 470"></svg></div>
+
+<div class="card"><h2>전체 수량 테이블</h2><p class="desc">누적 수량과 점유율</p>
+<table><thead><tr><th>순위</th><th>지점</th><th>누적</th><th>점유율</th></tr></thead>
+<tbody><tr><td>1</td><td><span class="pill" style="background:#4f63d2">SRY</span></td><td>251</td><td>31.7%</td></tr><tr><td>2</td><td><span class="pill" style="background:#8b55b6">LGY</span></td><td>190</td><td>24.0%</td></tr><tr><td>3</td><td><span class="pill" style="background:#58a942">ROB</span></td><td>152</td><td>19.2%</td></tr><tr><td>4</td><td><span class="pill" style="background:#e24a4a">BBY</span></td><td>83</td><td>10.5%</td></tr><tr><td>5</td><td><span class="pill" style="background:#d28a28">YAL</span></td><td>73</td><td>9.2%</td></tr><tr><td>6</td><td><span class="pill" style="background:#3f9fb6">MET</span></td><td>44</td><td>5.5%</td></tr><tr class="total"><td colspan="2">합계</td><td>793</td><td>100.0%</td></tr></tbody></table></div>
+
+<div class="card"><h2>날짜별 상세 수량</h2><p class="desc">모바일에서 좌우 스크롤</p><div class="scroll"><table class="wide">
+<thead><tr><th>지점</th><th>7/30</th><th>7/31</th><th>8/1</th><th>8/2</th><th>8/3</th><th>8/4</th><th>8/5</th><th>8/6</th><th>누적</th></tr></thead><tbody><tr><td>SRY</td><td>2</td><td>1</td><td>0</td><td>71</td><td>16</td><td>0</td><td>84</td><td>77</td><td><b>251</b></td></tr><tr><td>LGY</td><td>14</td><td>2</td><td>4</td><td>0</td><td>8</td><td>0</td><td>73</td><td>89</td><td><b>190</b></td></tr><tr><td>ROB</td><td>4</td><td>25</td><td>7</td><td>33</td><td>5</td><td>9</td><td>31</td><td>38</td><td><b>152</b></td></tr><tr><td>BBY</td><td>20</td><td>18</td><td>15</td><td>12</td><td>8</td><td>0</td><td>1</td><td>9</td><td><b>83</b></td></tr><tr><td>YAL</td><td>2</td><td>7</td><td>1</td><td>2</td><td>7</td><td>34</td><td>7</td><td>13</td><td><b>73</b></td></tr><tr><td>MET</td><td>4</td><td>11</td><td>3</td><td>7</td><td>4</td><td>0</td><td>8</td><td>7</td><td><b>44</b></td></tr>
+<tr class="total"><td>합계</td><td>46</td><td>64</td><td>30</td><td>125</td><td>48</td><td>43</td><td>204</td><td>233</td><td>793</td></tr></tbody></table></div>
+<div class="note">8/6: BBY 9 · SRY 77 · ROB 38 · LGY 89 · YAL 13 · MET 7 (일 합계 233개)</div></div>
+
+<div class="card">
+  <h2>채널 및 신규회원 증가 추이</h2>
+  <p class="desc">카카오톡 친구, Instagram 팔로워, 신규회원 증가 추이는 현재 수치 확인 중이며 확인되는 대로 동일 기간 기준으로 반영 예정입니다.</p>
+
+  <div class="pending-grid">
+    <div class="pending-card">
+      <div class="pending-head">
+        <strong>카카오톡 친구 증가 추이</strong>
+        <span class="pending-status">현재 파악중</span>
+      </div>
+      <div class="placeholder-chart">일자별 증가 추이 그래프<br>현재 파악중</div>
+      <table class="pending-table">
         <thead>
-          <tr>
-            <th>지점</th>
-            <th>7/30</th><th>7/31</th><th>8/1</th><th>8/2</th><th>8/3</th><th>8/4</th><th>8/5</th>
-            <th>누적</th>
-          </tr>
+          <tr><th>구분</th><th>시작</th><th>현재</th><th>증가</th></tr>
         </thead>
         <tbody>
-          <tr><td>SRY</td><td>2</td><td>1</td><td>0</td><td>71</td><td>16</td><td>0</td><td>84</td><td><strong>174</strong></td></tr><tr><td>ROB</td><td>4</td><td>25</td><td>7</td><td>33</td><td>5</td><td>9</td><td>31</td><td><strong>114</strong></td></tr><tr><td>LGY</td><td>14</td><td>2</td><td>4</td><td>0</td><td>8</td><td>0</td><td>73</td><td><strong>101</strong></td></tr><tr><td>BBY</td><td>20</td><td>18</td><td>15</td><td>12</td><td>8</td><td>0</td><td>1</td><td><strong>74</strong></td></tr><tr><td>YAL</td><td>2</td><td>7</td><td>1</td><td>2</td><td>7</td><td>34</td><td>7</td><td><strong>60</strong></td></tr><tr><td>MET</td><td>4</td><td>11</td><td>3</td><td>7</td><td>4</td><td>0</td><td>8</td><td><strong>37</strong></td></tr><tr class="total-row"><td>합계</td><td>46</td><td>64</td><td>30</td><td>125</td><td>48</td><td>43</td><td>204</td><td>560</td></tr>
+          <tr><td>카카오톡 친구</td><td>파악중</td><td>파악중</td><td>파악중</td></tr>
         </tbody>
       </table>
     </div>
-    <div class="note">※ 8월 5일 실적: BBY 1, SRY 84, ROB 31, LGY 73, YAL 7, MET 8.</div>
-  </section>
+
+    <div class="pending-card">
+      <div class="pending-head">
+        <strong>Instagram 팔로워 증가 추이</strong>
+        <span class="pending-status">현재 파악중</span>
+      </div>
+      <div class="placeholder-chart">일자별 증가 추이 그래프<br>현재 파악중</div>
+      <table class="pending-table">
+        <thead>
+          <tr><th>구분</th><th>시작</th><th>현재</th><th>증가</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Instagram</td><td>파악중</td><td>파악중</td><td>파악중</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pending-card">
+      <div class="pending-head">
+        <strong>신규회원 증가 추이</strong>
+        <span class="pending-status">현재 파악중</span>
+      </div>
+      <div class="placeholder-chart">일자별 신규회원 증가 그래프<br>현재 파악중</div>
+      <table class="pending-table">
+        <thead>
+          <tr><th>구분</th><th>시작</th><th>현재</th><th>증가</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>신규회원</td><td>파악중</td><td>파악중</td><td>파악중</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 </div>
 
 <script>
-const D = {"dates": ["7/30", "7/31", "8/1", "8/2", "8/3", "8/4", "8/5"], "branches": {"BBY": [20, 18, 15, 12, 8, 0, 1], "SRY": [2, 1, 0, 71, 16, 0, 84], "ROB": [4, 25, 7, 33, 5, 9, 31], "LGY": [14, 2, 4, 0, 8, 0, 73], "YAL": [2, 7, 1, 2, 7, 34, 7], "MET": [4, 11, 3, 7, 4, 0, 8]}, "totals": {"BBY": 74, "SRY": 174, "ROB": 114, "LGY": 101, "YAL": 60, "MET": 37}, "shares": {"BBY": 13.214285714285715, "SRY": 31.071428571428573, "ROB": 20.357142857142858, "LGY": 18.035714285714285, "YAL": 10.714285714285714, "MET": 6.607142857142858}, "ranking": ["SRY", "ROB", "LGY", "BBY", "YAL", "MET"], "dailyTotals": [46, 64, 30, 125, 48, 43, 204], "grandTotal": 560, "colors": {"BBY": "#e24a4a", "SRY": "#4f63d2", "ROB": "#58a942", "LGY": "#8b55b6", "YAL": "#d28a28", "MET": "#3f9fb6"}};
-const svg = document.getElementById('trendChart');
-const ns = "http://www.w3.org/2000/svg";
-const W=760,H=450,margin={top:30,right:18,bottom:50,left:44};
-const innerW=W-margin.left-margin.right, innerH=H-margin.top-margin.bottom;
-const maxY=90;
-
-function node(name, attrs={}, text="") {
-  const n=document.createElementNS(ns,name);
-  Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,v));
-  if(text!=="") n.textContent=text;
-  return n;
-}
-function x(i) { return margin.left + i*(innerW/(D.dates.length-1)); }
-function y(v) { return margin.top + innerH - (v/maxY)*innerH; }
-
-svg.appendChild(node("rect",{x:0,y:0,width:W,height:H,fill:"#fff"}));
-
-for(let t=0;t<=maxY;t+=10) {
-  const yy=y(t);
-  svg.appendChild(node("line",{x1:margin.left,y1:yy,x2:W-margin.right,y2:yy,stroke:"#e5e9f0","stroke-width":"1"}));
-  svg.appendChild(node("text",{x:margin.left-8,y:yy+4,"text-anchor":"end",fill:"#7a8393","font-size":"10"},String(t)));
-}
-
-D.dates.forEach((d,i)=>{
-  const xx=x(i);
-  svg.appendChild(node("line",{x1:xx,y1:margin.top,x2:xx,y2:H-margin.bottom,stroke:"#f1f3f7","stroke-width":"1"}));
-  svg.appendChild(node("text",{x:xx,y:H-margin.bottom+24,"text-anchor":"middle",fill:"#4e5868","font-size":"11","font-weight":"700"},d));
-});
-
-const offsets={
-  BBY:[-10,-10,-10,-10,-10,14,-10],
-  SRY:[14,14,14,-12,-12,14,-12],
-  ROB:[-12,-12,-12,-12,14,-12,-12],
-  LGY:[14,14,-12,14,14,14,14],
-  YAL:[-12,-12,14,-12,-12,-12,-12],
-  MET:[14,14,14,14,14,14,14]
-};
-
-Object.keys(D.branches).forEach(branch=>{
-  const vals=D.branches[branch];
-  svg.appendChild(node("polyline",{
-    points:vals.map((v,i)=>`${x(i)},${y(v)}`).join(" "),
-    fill:"none",stroke:D.colors[branch],"stroke-width":"2.6","stroke-linejoin":"round","stroke-linecap":"round"
-  }));
-  vals.forEach((v,i)=>{
-    const cx=x(i),cy=y(v);
-    svg.appendChild(node("circle",{cx,cy,r:"3.8",fill:"#fff",stroke:D.colors[branch],"stroke-width":"2.4"}));
-    svg.appendChild(node("text",{
-      x:cx,y:cy+(offsets[branch][i]||-10),"text-anchor":"middle",
-      fill:D.colors[branch],"font-size":"9.5","font-weight":"800",
-      stroke:"#fff","stroke-width":"3","paint-order":"stroke"
-    },String(v)));
-  });
-});
-
-const legend=document.getElementById("legend");
-Object.keys(D.branches).forEach(branch=>{
-  const item=document.createElement("div");
-  item.className="legend-item";
-  item.innerHTML=`<span class="legend-dot" style="background:${D.colors[branch]}"></span>${branch}`;
-  legend.appendChild(item);
-});
-</script>
-</body>
-</html>
+const D={"dates": ["7/30", "7/31", "8/1", "8/2", "8/3", "8/4", "8/5", "8/6"], "branches": {"BBY": [20, 18, 15, 12, 8, 0, 1, 9], "SRY": [2, 1, 0, 71, 16, 0, 84, 77], "ROB": [4, 25, 7, 33, 5, 9, 31, 38], "LGY": [14, 2, 4, 0, 8, 0, 73, 89], "YAL": [2, 7, 1, 2, 7, 34, 7, 13], "MET": [4, 11, 3, 7, 4, 0, 8, 7]}, "colors": {"BBY": "#e24a4a", "SRY": "#4f63d2", "ROB": "#58a942", "LGY": "#8b55b6", "YAL": "#d28a28", "MET": "#3f9fb6"}};
+const svg=document.getElementById("chart"),ns="http://www.w3.org/2000/svg";
+const W=820,H=470,m={top:28,right:18,bottom:48,left:44},iw=W-m.left-m.right,ih=H-m.top-m.bottom,maxY=100;
+function n(name,a={},t=""){const e=document.createElementNS(ns,name);Object.entries(a).forEach(([k,v])=>e.setAttribute(k,v));if(t)e.textContent=t;return e}
+function x(i){return m.left+i*(iw/(D.dates.length-1))} function y(v){return m.top+ih-(v/maxY)*ih}
+svg.appendChild(n("rect",{x:0,y:0,width:W,height:H,fill:"#fff"}));
+for(let t=0;t<=maxY;t+=10){let yy=y(t);svg.appendChild(n("line",{x1:m.left,y1:yy,x2:W-m.right,y2:yy,stroke:"#e5e9f0"}));svg.appendChild(n("text",{x:m.left-7,y:yy+4,"text-anchor":"end",fill:"#7a8393","font-size":"10"},String(t)))}
+D.dates.forEach((d,i)=>{let xx=x(i);svg.appendChild(n("text",{x:xx,y:H-m.bottom+24,"text-anchor":"middle",fill:"#4e5868","font-size":"10","font-weight":"700"},d))});
+const off={BBY:-10,SRY:-12,ROB:14,LGY:14,YAL:-12,MET:14};
+Object.keys(D.branches).forEach(b=>{let vals=D.branches[b];svg.appendChild(n("polyline",{points:vals.map((v,i)=>`${x(i)},${y(v)}`).join(" "),fill:"none",stroke:D.colors[b],"stroke-width":"2.5"}));vals.forEach((v,i)=>{let cx=x(i),cy=y(v);svg.appendChild(n("circle",{cx,cy,r:3.7,fill:"#fff",stroke:D.colors[b],"stroke-width":"2.2"}));svg.appendChild(n("text",{x:cx,y:cy+off[b],"text-anchor":"middle",fill:D.colors[b],"font-size":"9","font-weight":"800",stroke:"#fff","stroke-width":"3","paint-order":"stroke"},String(v)))})});
+const L=document.getElementById("legend");Object.keys(D.branches).forEach(b=>{L.insertAdjacentHTML("beforeend",`<span><i style="background:${D.colors[b]}"></i>${b}</span>`)})
+</script></body></html>
